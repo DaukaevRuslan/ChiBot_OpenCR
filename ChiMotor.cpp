@@ -47,28 +47,20 @@ void ChiMotor::calcRealVelocity() {
 		HardPositionPrev = HardPosition;
 		RealRadianVelocity = HardVelocity * SPEED_RATIO * (1000 / ENCODER_POLLING_RATE); 
 		
-		//if (FlagNewGoalVelocity and FlagWheelMode) {
-			if (GoalRadianVelocity != 0){
-
-				
-				velocityPID();
-				controlDriver();
-				FlagSavePosition = true;
+		if (GoalRadianVelocity != 0){
+			velocityPID();
+			controlDriver();
+			FlagSavePosition = true;
+		}
+		else {
+			if (FlagSavePosition){
+				GoalPosition = HardPosition;
+				FlagSavePosition = false;	
 			}
-			else {
-				if (FlagSavePosition){
-					GoalPosition = HardPosition;
-					FlagSavePosition = false;	
-				}
-				jointMode();
-				positionPID();
-				controlDriver();
-			}
-
-			
-		
-			//FlagNewGoalVelocity = true;
-		//}
+			jointMode();
+			positionPID();
+			controlDriver();
+		}
 	}
 }
 
@@ -96,9 +88,6 @@ void ChiMotor::tick() {
 	}
 
 	calcRealVelocity();
-
-
-
 }
 
 void ChiMotor::interruptListener() {
