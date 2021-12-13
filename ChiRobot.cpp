@@ -1,5 +1,7 @@
 #include "ChiRobot.h"
 
+ChiRobot ChiBot = ChiRobot();
+
 void ChiRobot::init(int _FL_FE, int _FL_SE, int _FL_FM, int _FL_SM,
 			 	    int _BL_FE, int _BL_SE, int _BL_FM, int _BL_SM,
 			 	    int _BR_FE, int _BR_SE, int _BR_FM, int _BR_SM,

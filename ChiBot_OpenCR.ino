@@ -1,7 +1,9 @@
 #include "ChiMotor.h"
+#include "ChiRobot.h"
 
 ChiMotor chiMotor1;
 ChiMotor chiMotor2;
+
 String strIn;
 double in;
 
@@ -26,7 +28,7 @@ void setup() {
   Serial.setTimeout(3);
 
   timer = millis();
-  
+  ChiBot.tick();
 }
 
 void loop() {
