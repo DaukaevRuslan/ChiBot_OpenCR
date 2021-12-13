@@ -29,6 +29,7 @@ class ChiMotor {
 
 		double GoalRadianVelocity;
 		double RealRadianVelocity;
+		
 		double integralVel;
 		double integralVelPrevErr;	
 		double integralPos;

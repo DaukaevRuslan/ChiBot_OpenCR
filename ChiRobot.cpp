@@ -27,9 +27,10 @@ void ChiRobot::tick() {
 void ChiRobot::setGoalVelocity(double _GoalVelocityX, double _GoalVelocityY, double _GoalVelocityW) {
 
 	FlagNewGoalVelocity = true;
-	GoalVelocityX = _GoalVelocityX;
-	GoalVelocityY = _GoalVelocityY;
-	GoalVelocityW = _GoalVelocityW;
+
+	GoalVelocityX = constrainVel(_GoalVelocityX, MIN_GOAL_VELOCITY_X, MAX_GOAL_VELOCITY_X);
+	GoalVelocityY = constrainVel(_GoalVelocityY, MIN_GOAL_VELOCITY_Y, MAX_GOAL_VELOCITY_Y);
+	GoalVelocityW = constrainVel(_GoalVelocityW, MIN_GOAL_VELOCITY_W, MAX_GOAL_VELOCITY_W);
 }
 
 void ChiRobot::IKSolve() {
@@ -44,4 +45,43 @@ void ChiRobot::IKSolve() {
 	ChiMotorBR.setGoalVelocity(tempVel3);
 	ChiMotorFR.setGoalVelocity(tempVel4);
 
+}
+
+void ChiRobot::FKSolve() {
+
+	double tempVel1 = ChiMotorFL.getRealRadianVelocity();
+	double tempVel2 = ChiMotorBL.getRealRadianVelocity();
+	double tempVel3 = ChiMotorBR.getRealRadianVelocity();
+	double tempVel4 = ChiMotorFR.getRealRadianVelocity();
+
+	RealVelocityX = ( tempVel1 + tempVel2 + tempVel3 + tempVel4) * (R / 4);
+	RealVelocityY = (-tempVel1 - tempVel2 + tempVel3 + tempVel4) * (R / 4);
+	RealVelocityW = (-tempVel1 + tempVel2 - tempVel3 + tempVel4) * (R / (2 * (L1 + L2)));
+
+}
+
+void ChiRobot::getRealVelocity(double &_RealVelocityX, double &_RealVelocityY, double &_RealVelocityW){
+
+	FKSolve();
+
+	_RealVelocityX = RealVelocityX;
+	_RealVelocityY = RealVelocityY;
+	_RealVelocityW = RealVelocityW;
+}
+
+void ChiRobot::getGoalVelocity(double &_GoalVelocityX, double &_GoalVelocityY, double &_GoalVelocityW) {
+
+	_GoalVelocityX = GoalVelocityX;
+	_GoalVelocityY = GoalVelocityY;
+	_GoalVelocityW = GoalVelocityW;
+
+}
+
+double ChiRobot::constrainVel(double value, double min, double max) {
+
+	if (value < min)
+		return min;
+	else if (value > max)
+		return max;
+	else return value;
 }

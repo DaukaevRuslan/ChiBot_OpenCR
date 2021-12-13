@@ -16,11 +16,17 @@ class ChiRobot {
 		double GoalVelocityY;
 		double GoalVelocityW;
 
+		double RealVelocityX;
+		double RealVelocityY;
+		double RealVelocityW;
+
 		long Timer;
 		bool FlagNewGoalVelocity;
 
 		void IKSolve();
 		void FKSolve();
+
+		double constrainVel(double value, double min, double max);
 
 	public:
 
