@@ -2,6 +2,7 @@
 #define CHI_ROBOT_H
 
 #include "ChiMotor.h"
+#include "ChiRobotConfig.h"
 
 class ChiRobot {
 
@@ -44,5 +45,7 @@ class ChiRobot {
 
 
 };
+
+extern ChiRobot ChiBot;
 
 #endif
