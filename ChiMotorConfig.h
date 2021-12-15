@@ -5,7 +5,7 @@
 	#define ENCODER_POLLING_RATE	20
 
 	#define V_KP	10
-	#define V_KI	110
+	#define V_KI	111
 	#define V_KD	0
 
 	#define P_KP	7	//7		//7
