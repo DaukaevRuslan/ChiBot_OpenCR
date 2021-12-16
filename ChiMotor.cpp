@@ -57,6 +57,7 @@ void ChiMotor::calcRealVelocity() {
 				GoalPosition = HardPosition;
 				FlagSavePosition = false;	
 			}
+			PWM = 0;
 			jointMode();
 			positionPID();
 			controlDriver();

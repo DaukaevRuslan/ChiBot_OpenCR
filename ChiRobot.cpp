@@ -37,10 +37,10 @@ void ChiRobot::setGoalVelocity(double _GoalVelocityX, double _GoalVelocityY, dou
 
 void ChiRobot::IKSolve() {
 
-	double tempVel1 = (1 / R) * (GoalVelocityX + GoalVelocityY + (L1 + L2) * GoalVelocityW / 2);
-	double tempVel2 = (1 / R) * (GoalVelocityX + GoalVelocityY - (L1 + L2) * GoalVelocityW / 2);
-	double tempVel3 = (1 / R) * (GoalVelocityX - GoalVelocityY - (L1 + L2) * GoalVelocityW / 2);
-	double tempVel4 = (1 / R) * (GoalVelocityX - GoalVelocityY + (L1 + L2) * GoalVelocityW / 2);
+	double tempVel1 = -(1 / R) * (GoalVelocityX + GoalVelocityY + (L1 + L2) * GoalVelocityW / 2);
+	double tempVel2 = -(1 / R) * (GoalVelocityX - GoalVelocityY + (L1 + L2) * GoalVelocityW / 2);
+	double tempVel3 = (1 / R) * (GoalVelocityX + GoalVelocityY - (L1 + L2) * GoalVelocityW / 2);
+	double tempVel4 = (1 / R) * (GoalVelocityX - GoalVelocityY - (L1 + L2) * GoalVelocityW / 2);
 
 	ChiMotorFL.setGoalVelocity(tempVel1);
 	ChiMotorBL.setGoalVelocity(tempVel2);

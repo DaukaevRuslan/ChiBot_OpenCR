@@ -8,10 +8,7 @@ class ChiRobot {
 
 	private:
 
-		ChiMotor ChiMotorFL;
-		ChiMotor ChiMotorBL;
-		ChiMotor ChiMotorBR;
-		ChiMotor ChiMotorFR;
+		
 
 		double GoalVelocityX;
 		double GoalVelocityY;
@@ -30,6 +27,11 @@ class ChiRobot {
 		double constrainVel(double value, double min, double max);
 
 	public:
+
+		ChiMotor ChiMotorFL;
+		ChiMotor ChiMotorBL;
+		ChiMotor ChiMotorBR;
+		ChiMotor ChiMotorFR;
 
 		void init(int _FL_FE, int _FL_SE, int _FL_FM, int _FL_SM,
 			 	  int _BL_FE, int _BL_SE, int _BL_FM, int _BL_SM,
