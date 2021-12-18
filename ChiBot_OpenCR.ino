@@ -31,19 +31,19 @@ void cmdGetter(const geometry_msgs::Twist &twist){
   y = 6 * twist.linear.y;
   z = 20 * twist.angular.z;
 }
-//typedef ros::NodeHandle_<ArduinoHardware, 11, 11, 16384, 16384> NodeHandle;
-//ros::NodeHandle nh;
-//ros::Subscriber<geometry_msgs::Twist> mySub("cmd_vel", cmdGetter);
-//nav_msgs::Odometry odom;
-//ros::Publisher myPub("call_back", &odom);
+typedef ros::NodeHandle_<ArduinoHardware, 11, 11, 16384, 16384> NodeHandle;
+ros::NodeHandle nh;
+ros::Subscriber<geometry_msgs::Twist> mySub("cmd_vel", cmdGetter);
+nav_msgs::Odometry odom;
+ros::Publisher myPub("call_back", &odom);
 
 void setup() {
   //Serial.begin(1000000);
 
-//  nh.initNode();
-//  nh.getHardware()->setBaud(1000000);
-//  nh.subscribe(mySub);
-//  nh.advertise(myPub);
+  nh.initNode();
+  nh.getHardware()->setBaud(1000000);
+  nh.subscribe(mySub);
+  nh.advertise(myPub);
   
   ChiBot.init(10, 4, 11, 5,
               12, 7,  1, 6,
@@ -54,8 +54,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(8), fuTest3, CHANGE);
   attachInterrupt(digitalPinToInterrupt(2), fuTest4, CHANGE);
 
-  Serial.begin(115200);
-  Serial.setTimeout(3);
+//  Serial.begin(115200);
+//  Serial.setTimeout(3);
 
   timer = millis();
   
@@ -66,7 +66,7 @@ void loop() {
   if (millis() - timer > 20) {
 
     timer = millis();
-//    nh.spinOnce();
+    nh.spinOnce();
 
 //    Serial.println(ChiBot.ChiMotorFL.getRealRadianVelocity());
 //    Serial.println(ChiBot.ChiMotorBL.getRealRadianVelocity());
@@ -75,42 +75,42 @@ void loop() {
 //    Serial.println("");
   }
   
-    if (Serial.available() > 0){
-    in = Serial.read();
-
-    switch(in) {
-      case 'w':
-      x += 1;
-      break;
-      case 'x':
-      x -= 1;
-      break;
-      case 's':
-      x = 0;
-      y = 0;
-      z = 0;
-      break;
-      case 'a':
-      y -= 1;
-      break;
-      case 'd':
-      y += 1;
-      break;
-      case 'q':
-      z -= 6;
-      break;
-      case 'e':
-      z += 6;
-      break;
-    }
-
-    ChiBot.setGoalVelocity(x, y, z);
-    }
-
-//    if (nh.connected()){
-//      ChiBot.setGoalVelocity(x, y, z);  
+//    if (Serial.available() > 0){
+//    in = Serial.read();
+//
+//    switch(in) {
+//      case 'w':
+//      x += 1;
+//      break;
+//      case 'x':
+//      x -= 1;
+//      break;
+//      case 's':
+//      x = 0;
+//      y = 0;
+//      z = 0;
+//      break;
+//      case 'a':
+//      y -= 1;
+//      break;
+//      case 'd':
+//      y += 1;
+//      break;
+//      case 'q':
+//      z -= 6;
+//      break;
+//      case 'e':
+//      z += 6;
+//      break;
 //    }
-//    else {
-//      ChiBot.setGoalVelocity(0, 0, 0);
+//
+//    ChiBot.setGoalVelocity(x, y, z);
 //    }
+
+    if (nh.connected()){
+      ChiBot.setGoalVelocity(x, y, z);  
+    }
+    else {
+      ChiBot.setGoalVelocity(0, 0, 0);
+    }
 }
