@@ -14,5 +14,7 @@
 
 	#define MIN_PWM	-255
 	#define MAX_PWM	255
+	#define UPPER_BAR_PWN	45
+	#define BOTTOM_BAR_PWM	-45
 
 #endif

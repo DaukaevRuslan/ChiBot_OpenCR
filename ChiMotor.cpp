@@ -58,6 +58,10 @@ void ChiMotor::calcRealVelocity() {
 				FlagSavePosition = false;	
 			}
 			PWM = 0;
+			integralVel = 0;
+			integralVelPrevErr = 0;
+			integralPos = 0;
+			integralPosPrevErr = 0;
 			jointMode();
 			positionPID();
 			controlDriver();
@@ -128,5 +132,9 @@ double ChiMotor::constrainPWM(double value) {
 		return MIN_PWM;
 	else if (value > MAX_PWM)
 		return MAX_PWM;
+	else if (value > 0 and value < UPPER_BAR_PWN)
+		return UPPER_BAR_PWN;
+	else if (value < 0 and value > -BOTTOM_BAR_PWM)
+		return -BOTTOM_BAR_PWM;
 	else return value;
 }
