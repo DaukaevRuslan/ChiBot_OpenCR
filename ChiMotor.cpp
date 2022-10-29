@@ -2,105 +2,106 @@
 
 void ChiMotor::init(int _FE, int _SE, int _FM, int _SM) {
 
-	Timer = millis();
+  Timer = millis();
 
-	FE = _FE;
-	SE = _SE;
-	FM = _FM;
-	SM = _SM;
+  FE = _FE;
+  SE = _SE;
+  FM = _FM;
+  SM = _SM;
 
-	F = 0;
-	S = 0;
+  F = 0;
+  S = 0;
 
-	HardPositionPrev = 0;
-	HardPosition 	 = 0;
-	HardVelocity	 = 0;
+  HardPositionPrev = 0;
+  HardPosition 	   = 0;
+  HardVelocity	   = 0;
 
-	FlagInterrupt = false;
+  FlagInterrupt = false;
 
-	pinMode(FE, INPUT);
-	pinMode(SE, INPUT);
-	pinMode(FM, OUTPUT);
-	pinMode(SM, OUTPUT);
+  pinMode(FE, INPUT);
+  pinMode(SE, INPUT);
+  pinMode(FM, OUTPUT);
+  pinMode(SM, OUTPUT);
 }
 
 void ChiMotor::jointMode() {
-	FlagWheelMode = false;
-	FlagJointMode = true;
+  FlagWheelMode = false;
+  FlagJointMode = true;
 }
 
 void ChiMotor::wheelMode() {
-	FlagJointMode = false;
-	FlagWheelMode = true;
+  FlagJointMode = false;
+  FlagWheelMode = true;
 }
 
 void ChiMotor::setGoalVelocity(double _GoalRadianVelocity) {
-	wheelMode();
-	GoalRadianVelocity = _GoalRadianVelocity;
-	FlagNewGoalVelocity = true;	// Проверить необходимость
+  wheelMode();
+  GoalRadianVelocity = _GoalRadianVelocity;
 }
 
 void ChiMotor::calcRealVelocity() {
-	if (millis() - Timer > ENCODER_POLLING_RATE) {
-		Timer = millis();
-		HardVelocity = HardPosition - HardPositionPrev;
-		HardPositionPrev = HardPosition;
-		RealRadianVelocity = HardVelocity * SPEED_RATIO * (1000 / ENCODER_POLLING_RATE); 
-		
-		if (GoalRadianVelocity != 0){
-			velocityPID();
-			controlDriver();
-			FlagSavePosition = true;
-		}
-		else {
-			if (FlagSavePosition){
-				GoalPosition = HardPosition;
-				FlagSavePosition = false;	
-			}
-			PWM = 0;
-			integralVel = 0;
-			integralVelPrevErr = 0;
-			integralPos = 0;
-			integralPosPrevErr = 0;
-			jointMode();
-			positionPID();
-			controlDriver();
-		}
-	}
+  if (millis() - Timer > ENCODER_POLLING_RATE) {
+    Timer = millis();
+    HardVelocity = HardPosition - HardPositionPrev;
+    HardPositionPrev = HardPosition;
+    RealRadianVelocity = HardVelocity * SPEED_RATIO * (1000 / ENCODER_POLLING_RATE);
+
+    if (GoalRadianVelocity != 0) {
+      velocityPID();
+      controlDriver();
+      FlagSavePosition = true;
+    }
+    else {
+      if (FlagSavePosition) {
+        GoalPosition = HardPosition;
+        FlagSavePosition = false;
+      }
+      
+      integralPosPrevErr = 0;
+      integralVelPrevErr = 0;
+      integralVel = 0;
+      integralPos = 0;
+      PWM = 0;
+      
+      jointMode();
+      positionPID();
+      controlDriver();
+    }
+  }
 }
 
 double ChiMotor::getRealRadianVelocity() {
-	return RealRadianVelocity;
+  return RealRadianVelocity;
 }
 
 double ChiMotor::getGoalRadianVelocity() {
-	return GoalRadianVelocity;
+  return GoalRadianVelocity;
 }
 
 void ChiMotor::tick() {
 
-	if (FlagInterrupt) {		
+  if (FlagInterrupt) {
 
-		F = digitalRead(FE);
-		S = digitalRead(SE);
+    F = digitalRead(FE);
+    S = digitalRead(SE);
 
-		if (F == S)
-			HardPosition++;
-		else
-			HardPosition--;
+    if (F == S)
+      HardPosition++;
+    else
+      HardPosition--;
 
-		FlagInterrupt = false;
-	}
+    FlagInterrupt = false;
+  }
 
-	calcRealVelocity();
+  calcRealVelocity();
 }
 
 void ChiMotor::interruptListener() {
-	FlagInterrupt = true;
+  FlagInterrupt = true;
 }
 
 void ChiMotor::velocityPID() {
-	
+
   double err = GoalRadianVelocity - RealRadianVelocity;
   integralVel = constrainPWM(integralVel + (double)err * V_KI * ((double)ENCODER_POLLING_RATE / 1000));
   double D = (err - integralVelPrevErr) / ((double)ENCODER_POLLING_RATE / 1000);
@@ -117,24 +118,24 @@ void ChiMotor::positionPID() {
 }
 
 void ChiMotor::controlDriver() {
-	if (PWM < 0) {
-    	analogWrite(SM, 255 + PWM);
-    	digitalWrite(FM, HIGH);
-  	}
-  	if (PWM >= 0) {
-    	analogWrite(SM, PWM);
-    	digitalWrite(FM, LOW);
-  	}
+  if (PWM < 0) {
+    analogWrite(SM, 255 + PWM);
+    digitalWrite(FM, HIGH);
+  }
+  if (PWM >= 0) {
+    analogWrite(SM, PWM);
+    digitalWrite(FM, LOW);
+  }
 }
 
 double ChiMotor::constrainPWM(double value) {
-	if (value < MIN_PWM)
-		return MIN_PWM;
-	else if (value > MAX_PWM)
-		return MAX_PWM;
-	else if (value > 0 and value < UPPER_BAR_PWN)
-		return UPPER_BAR_PWN;
-	else if (value < 0 and value > -BOTTOM_BAR_PWM)
-		return -BOTTOM_BAR_PWM;
-	else return value;
+  if (value < MIN_PWM)
+    return MIN_PWM;
+  else if (value > MAX_PWM)
+    return MAX_PWM;
+  else if (value > 0 and value < UPPER_BAR_PWN)
+    return UPPER_BAR_PWN;
+  else if (value < 0 and value > -BOTTOM_BAR_PWM)
+    return -BOTTOM_BAR_PWM;
+  else return value;
 }

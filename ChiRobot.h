@@ -8,8 +8,6 @@ class ChiRobot {
 
 	private:
 
-		
-
 		double GoalVelocityX;
 		double GoalVelocityY;
 		double GoalVelocityW;
@@ -43,9 +41,6 @@ class ChiRobot {
 		void setGoalVelocity(double _GoalVelocityX, double _GoalVelocityY, double _GoalVelocityW);
 		void getGoalVelocity(double &_GoalVelocityX, double &_GoalVelocityY, double &_GoalVelocityW);
 		void getRealVelocity(double &_RealVelocityX, double &_RealVelocityY, double &_RealVelocityW);
-
-
-
 };
 
 extern ChiRobot ChiBot;

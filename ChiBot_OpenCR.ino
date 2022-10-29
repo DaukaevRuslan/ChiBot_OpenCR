@@ -3,15 +3,10 @@
 
 #include <ros.h>
 #include <geometry_msgs/Twist.h>
-#include <tf/transform_broadcaster.h>
 #include <std_msgs/Float64MultiArray.h>
-#include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
-#include <tf/tf.h>
 
-char in;
-long timer;
 long timerVoltage;
 long timerConnect;
 long timerVelocity;
@@ -29,16 +24,16 @@ double X = 0.0;
 double Y = 0.0;
 double A = 0.0;
 
-void fuTest1() {
+void interruptListenerFL() {
   ChiBot.ChiMotorFL.interruptListener();
 }
-void fuTest2() {
+void interruptListenerBL() {
   ChiBot.ChiMotorBL.interruptListener();
 }
-void fuTest3() {
+void interruptListenerBR() {
   ChiBot.ChiMotorBR.interruptListener();
 }
-void fuTest4() {
+void interruptListenerFR() {
   ChiBot.ChiMotorFR.interruptListener();
 }
 
@@ -57,17 +52,6 @@ void cmdGetter(const geometry_msgs::Twist &twist) {
   goalVelocityX = twist.linear.x;
   goalVelocityY = -twist.linear.y;
   goalVelocityZ = -twist.angular.z;
-
-//  if (twist.linear.x > -0.01 and twist.linear.x < 0.01) goalVelocityX = 0;
-//  if (twist.linear.y > -0.01 and twist.linear.y < 0.01) goalVelocityY = 0;
-//  if (twist.angular.z > -0.01 and twist.angular.z < 0.01) goalVelocityZ = 0;
-//
-//  if (nh.connected()) {
-//    ChiBot.setGoalVelocity(goalVelocityX, goalVelocityY, goalVelocityZ);
-//  }
-//  else {
-//    ChiBot.setGoalVelocity(0, 0, 0);
-//  }
 }
 
 void coonectListener(const std_msgs::String &connectString) {
@@ -79,8 +63,6 @@ void coonectListener(const std_msgs::String &connectString) {
 ros::Subscriber<geometry_msgs::Twist> mySub("cmd_vel", cmdGetter);
 ros::Subscriber<std_msgs::String> subConnect("connection", coonectListener);
 
-std_msgs::Int32 test;
-ros::Publisher testPub("testPub", &test);
 std_msgs::Float32 voltageMsg;
 ros::Publisher pubVoltage("voltage", &voltageMsg);
 std_msgs::Float64MultiArray velocityMsg;
@@ -98,25 +80,22 @@ void setup() {
   velocityMsg.data = (float*)malloc(sizeof(float) * 4);
   velocityMsg.data_length = 4;
 
-
   ChiBot.init(10, 4, 11, 5,
               12, 7,  1, 6,
               14, 8, 15, 9,
               0, 2, 61, 3);
-  attachInterrupt(digitalPinToInterrupt(4), fuTest1, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(7), fuTest2, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(8), fuTest3, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(2), fuTest4, CHANGE);
 
-  timer = millis();
+  attachInterrupt(digitalPinToInterrupt(4), interruptListenerFL, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(7), interruptListenerBL, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(8), interruptListenerBR, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(2), interruptListenerFR, CHANGE);
+
   timerVoltage = millis();
   timerConnect = millis();
   timerVelocity = millis();
-  
+
   pinMode(A4, OUTPUT); // Индикация включения
   pinMode(A5, OUTPUT); // Индикация начала общения с верхним уровнем
-
-  Serial.begin(115200);
 
 }
 
@@ -127,13 +106,13 @@ void loop() {
   if (millis() - timerVelocity > 100) {
     timerVelocity = millis();
 
-    
-//    goalVelocityX = round(goalVelocityX * 200) / 200;
-//    
-//    goalVelocityY = round(goalVelocityY * 2000) / 2000;
-//    goalVelocityZ = round(goalVelocityZ * 2000) / 2000;
+    velocityMsg.data[0] = ChiBot.ChiMotorFL.getRealRadianVelocity();
+    velocityMsg.data[1] = ChiBot.ChiMotorBL.getRealRadianVelocity();
+    velocityMsg.data[2] = ChiBot.ChiMotorBR.getRealRadianVelocity();
+    velocityMsg.data[3] = ChiBot.ChiMotorFR.getRealRadianVelocity();
 
-    
+    pubVelocity.publish(&velocityMsg);
+
     if (goalVelocityX > -0.01 and goalVelocityX < 0.01) goalVelocityX = 0;
     if (goalVelocityY > -0.01 and goalVelocityY < 0.01) goalVelocityY = 0;
     if (goalVelocityZ > -0.01 and goalVelocityZ < 0.01) goalVelocityZ = 0;
@@ -144,26 +123,6 @@ void loop() {
     else {
       ChiBot.setGoalVelocity(0, 0, 0);
     }
-  }
-
-  if (millis() - timer > 100) {
-    timer = millis();
-
-    velocityMsg.data[0] = ChiBot.ChiMotorFL.getRealRadianVelocity();
-    velocityMsg.data[1] = ChiBot.ChiMotorBL.getRealRadianVelocity();
-    velocityMsg.data[2] = ChiBot.ChiMotorBR.getRealRadianVelocity();
-    velocityMsg.data[3] = ChiBot.ChiMotorFR.getRealRadianVelocity();
-
-    pubVelocity.publish(&velocityMsg);
-//    Serial.print("FL: "); Serial.print(ChiBot.ChiMotorFL.getGoalRadianVelocity(), 3);
-//    Serial.print(" BL: "); Serial.print(ChiBot.ChiMotorBL.getGoalRadianVelocity(), 3);
-//    Serial.print(" BR: "); Serial.print(ChiBot.ChiMotorBR.getGoalRadianVelocity(), 3);
-//    Serial.print(" FR: "); Serial.println(ChiBot.ChiMotorFR.getGoalRadianVelocity(), 3);
-
-    //    Serial.print("X: "); Serial.print(goalVelocityX, 2);
-    //    Serial.print(" Y: "); Serial.print(goalVelocityY, 2);
-    //    Serial.print(" W: "); Serial.println(goalVelocityZ, 2);
-
   }
 
   if (millis() - timerVoltage > 1000) {

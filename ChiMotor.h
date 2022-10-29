@@ -16,51 +16,42 @@ class ChiMotor {
 		bool FlagWheelMode;
 		bool FlagJointMode;
 		bool FlagInterrupt;
-		bool FlagNewGoalVelocity; // Проверить необходимость
 		bool FlagSavePosition;
 
-		
-
 		long Timer;
+   
 		int  HardPositionPrev;
 		int  HardPosition;
 		int  HardVelocity;
 		int  GoalPosition;
-
-
-		
+	
 		double integralVel;
 		double integralVelPrevErr;	
 		double integralPos;
 		double integralPosPrevErr;	
-		
+
+    double constrainPWM(double value);
 		void calcRealVelocity();
 		void controlDriver();
 		void velocityPID();
-		void positionPID();
-		double constrainPWM(double value);
+		void positionPID();	
+    void wheelMode();
+    void jointMode();
 
-		
+		int PWM;
+    double GoalRadianVelocity;
+    double RealRadianVelocity;
 
 	public:
 
 		void init(int FE, int SE, int FM, int SM);
 		void interruptListener();
-		void wheelMode();
-		void jointMode();
 		void tick();
-    int PWM;
-    double GoalRadianVelocity;
-    double RealRadianVelocity;
 
 		double getRealRadianVelocity();
 		double getGoalRadianVelocity();
 
 		void setGoalVelocity(double _GoalRadianVelocity);
-
-
-
-
 };
 
 #endif
