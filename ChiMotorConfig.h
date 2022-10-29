@@ -12,9 +12,9 @@
 	#define P_KI	2	//2     //15
 	#define P_KD	0 //0     //0.2
 
-	#define MIN_PWM	-255
-	#define MAX_PWM	255
-	#define UPPER_BAR_PWN	45
-	#define BOTTOM_BAR_PWM	-45
+	#define MIN_PWM	-250
+	#define MAX_PWM	250
+	#define UPPER_BAR_PWN	0 //25
+	#define BOTTOM_BAR_PWM	0 //25
 
 #endif

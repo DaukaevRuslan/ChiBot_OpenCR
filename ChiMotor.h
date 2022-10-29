@@ -19,7 +19,7 @@ class ChiMotor {
 		bool FlagNewGoalVelocity; // Проверить необходимость
 		bool FlagSavePosition;
 
-		int PWM;
+		
 
 		long Timer;
 		int  HardPositionPrev;
@@ -27,8 +27,7 @@ class ChiMotor {
 		int  HardVelocity;
 		int  GoalPosition;
 
-		double GoalRadianVelocity;
-		double RealRadianVelocity;
+
 		
 		double integralVel;
 		double integralVelPrevErr;	
@@ -50,6 +49,9 @@ class ChiMotor {
 		void wheelMode();
 		void jointMode();
 		void tick();
+    int PWM;
+    double GoalRadianVelocity;
+    double RealRadianVelocity;
 
 		double getRealRadianVelocity();
 		double getGoalRadianVelocity();
