@@ -56,7 +56,7 @@ void cmdGetter(const geometry_msgs::Twist &twist) {
 
   goalVelocityX = twist.linear.x;
   goalVelocityY = -twist.linear.y;
-  goalVelocityZ = twist.angular.z;
+  goalVelocityZ = -twist.angular.z;
 
 //  if (twist.linear.x > -0.01 and twist.linear.x < 0.01) goalVelocityX = 0;
 //  if (twist.linear.y > -0.01 and twist.linear.y < 0.01) goalVelocityY = 0;
@@ -127,22 +127,16 @@ void loop() {
   if (millis() - timerVelocity > 100) {
     timerVelocity = millis();
 
-    Serial.println("GOAL V: " + String(ChiBot.ChiMotorFL.GoalRadianVelocity));
-    Serial.println("REAL V: " + String(ChiBot.ChiMotorFL.RealRadianVelocity));
-    Serial.println("PWM: " + String(ChiBot.ChiMotorFL.PWM));
     
-    goalVelocityX = round(goalVelocityX * 200) / 200;
-
-
-    Serial.println(" ");
-    
-    goalVelocityY = round(goalVelocityY * 2000) / 2000;
-    goalVelocityZ = round(goalVelocityZ * 2000) / 2000;
+//    goalVelocityX = round(goalVelocityX * 200) / 200;
+//    
+//    goalVelocityY = round(goalVelocityY * 2000) / 2000;
+//    goalVelocityZ = round(goalVelocityZ * 2000) / 2000;
 
     
-//    if (goalVelocityX > -0.01 and goalVelocityX < 0.01) goalVelocityX = 0;
-//    if (goalVelocityY > -0.01 and goalVelocityY < 0.01) goalVelocityY = 0;
-//    if (goalVelocityZ > -0.01 and goalVelocityZ < 0.01) goalVelocityZ = 0;
+    if (goalVelocityX > -0.01 and goalVelocityX < 0.01) goalVelocityX = 0;
+    if (goalVelocityY > -0.01 and goalVelocityY < 0.01) goalVelocityY = 0;
+    if (goalVelocityZ > -0.01 and goalVelocityZ < 0.01) goalVelocityZ = 0;
 
     if (nh.connected()) {
       ChiBot.setGoalVelocity(goalVelocityX, goalVelocityY, goalVelocityZ);
