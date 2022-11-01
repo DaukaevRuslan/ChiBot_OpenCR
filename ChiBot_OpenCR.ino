@@ -10,7 +10,9 @@
 long timerVoltage;
 long timerConnect;
 long timerVelocity;
+
 bool flagConnect = false;
+bool flagBuzzer = false;
 
 float goalVelocityX = 0.0;
 float goalVelocityY = 0.0;
@@ -54,14 +56,7 @@ void cmdGetter(const geometry_msgs::Twist &twist) {
   goalVelocityZ = -twist.angular.z;
 }
 
-void coonectListener(const std_msgs::String &connectString) {
-  String conn = connectString.data;
-  if (conn.equals("Connect")) flagConnect = true;
-  else flagConnect = false;
-}
-
 ros::Subscriber<geometry_msgs::Twist> mySub("cmd_vel", cmdGetter);
-ros::Subscriber<std_msgs::String> subConnect("connection", coonectListener);
 
 std_msgs::Float32 voltageMsg;
 ros::Publisher pubVoltage("voltage", &voltageMsg);
@@ -73,7 +68,6 @@ void setup() {
   nh.getHardware()->setBaud(500000);
   nh.initNode();
   nh.subscribe(mySub);
-  nh.subscribe(subConnect);
   nh.advertise(pubVoltage);
   nh.advertise(pubVelocity);
 
@@ -97,6 +91,15 @@ void setup() {
   pinMode(A4, OUTPUT); // Индикация включения
   pinMode(A5, OUTPUT); // Индикация начала общения с верхним уровнем
 
+  for (int i = 0; i < 5; i++) {
+    tone(BDPIN_BUZZER, 100 * i, 250);
+    delay(100);
+    noTone(BDPIN_BUZZER);
+    delay(50);
+  }
+  noTone(BDPIN_BUZZER);
+  delay(100);
+
 }
 
 void loop() {
@@ -119,9 +122,11 @@ void loop() {
 
     if (nh.connected()) {
       ChiBot.setGoalVelocity(goalVelocityX, goalVelocityY, goalVelocityZ);
+      flagConnect = true;
     }
     else {
       ChiBot.setGoalVelocity(0, 0, 0);
+      flagConnect = false;
     }
   }
 
@@ -129,15 +134,19 @@ void loop() {
     timerVoltage = millis();
     voltageMsg.data = checkVoltage();
     pubVoltage.publish(&voltageMsg);
-  }
 
-  if (millis() - timerConnect > 3000) {
-    timerConnect = millis();
-    flagConnect = false;
+    if (checkVoltage() < 11.5) {
+      if (!flagBuzzer) {
+        flagBuzzer = true;
+        tone(BDPIN_BUZZER, 300, 250);
+      } else {
+        flagBuzzer = false; 
+        noTone(BDPIN_BUZZER);
+      }
+    }
   }
 
   digitalWrite(A4, HIGH);
-
 
   if (flagConnect) digitalWrite(A5, HIGH);
   else digitalWrite(A5, LOW);

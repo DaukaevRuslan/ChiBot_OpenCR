@@ -32,9 +32,9 @@ class ChiRobot {
 		ChiMotor ChiMotorFR;
 
 		void init(int _FL_FE, int _FL_SE, int _FL_FM, int _FL_SM,
-			 	  int _BL_FE, int _BL_SE, int _BL_FM, int _BL_SM,
-			 	  int _BR_FE, int _BR_SE, int _BR_FM, int _BR_SM,
-			 	  int _FR_FE, int _FR_SE, int _FR_FM, int _FR_SM);
+			 	      int _BL_FE, int _BL_SE, int _BL_FM, int _BL_SM,
+			 	      int _BR_FE, int _BR_SE, int _BR_FM, int _BR_SM,
+			 	      int _FR_FE, int _FR_SE, int _FR_FM, int _FR_SM);
 
 		void tick();
 
