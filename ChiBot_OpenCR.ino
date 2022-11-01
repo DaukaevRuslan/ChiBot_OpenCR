@@ -77,7 +77,7 @@ void setup() {
   ChiBot.init(10, 4, 11, 5,
               12, 7,  1, 6,
               14, 8, 15, 9,
-              0, 2, 61, 3);
+               0, 2, 61, 3);
 
   attachInterrupt(digitalPinToInterrupt(4), interruptListenerFL, CHANGE);
   attachInterrupt(digitalPinToInterrupt(7), interruptListenerBL, CHANGE);
@@ -99,7 +99,6 @@ void setup() {
   }
   noTone(BDPIN_BUZZER);
   delay(100);
-
 }
 
 void loop() {
